@@ -1,0 +1,111 @@
+services:
+  api-gateway:
+    build:
+      context: ./apps/api-gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/api-gateway:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+
+  user-management:
+    build:
+      context: ./apps/api-gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/user-management:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+
+  product-catalog:
+    build:
+      context: ./apps/api-gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3002:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/product-catalog:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+
+  order-processing:
+    build:
+      context: ./apps/api-gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3003:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/order-processing:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+
+  payment-gateway:
+    build:
+      context: ./apps/api-gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3004:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/payment-gateway:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api-gateway
+      - user-management
+      - product-catalog
+      - order-processing
+      - payment-gateway
+
+  postgres:
+    image: postgres:14.13-alpine3.20
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.4.0-alpine3.20
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
